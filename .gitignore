@@ -1,57 +1,31 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
+*.pyc
+*.pyd
+*.pyo
 *.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+.pytest_cache/
 
-# Virtual environments
-.venv
-venv/
-ENV/
-env/
-.env
-
-# Jupyter Notebook
-.ipynb_checkpoints
-*.ipynb
-
-# IDE
+# IDE files
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
 
-# Data files
-*.csv
-*.xlsx
-*.xls
-*.json
-*.parquet
-
-# OS
+# OS-generated files
 .DS_Store
 Thumbs.db
 
-# Temp files
-*.tmp
+# Virtual environment
+.venv/
+env/
+venv/
+/htmlcov/
+
+# Logs and databases
 *.log
+*.sqlite
+*.db
+
+# Data files
+*.csv
+*.xls
+*.xlsx
