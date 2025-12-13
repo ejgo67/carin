@@ -2,6 +2,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import koreanize_matplotlib
 import os
+import datetime as dt
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
 from load_data import load_datasets
 
 # 이미지 저장 디렉토리 생성
@@ -293,6 +296,94 @@ def plot_top_products_by_quantity(merged_df):
     return report
 
 
+
+def plot_customer_segmentation(merged_df):
+    """RFM 기반 고객 세그먼트 분석"""
+    report = "## 12. 고객 세그먼트 분석 (RFM)\n\n"
+    report += "고객의 최근 구매일(Recency), 구매 빈도(Frequency), 총 구매 금액(Monetary)을 기반으로 고객을 여러 세그먼트로 분류합니다. 이를 통해 각 세그먼트의 특성을 파악하고 타겟 마케팅 전략을 수립할 수 있습니다.\n\n"
+
+    df = merged_df.copy()
+    df['order_purchase_timestamp'] = pd.to_datetime(df['order_purchase_timestamp'])
+
+    # Recency 계산
+    snapshot_date = df['order_purchase_timestamp'].max() + dt.timedelta(days=1)
+    rfm = df.groupby('customer_unique_id').agg({
+        'order_purchase_timestamp': lambda x: (snapshot_date - x.max()).days,
+        'order_id': 'nunique',
+        'payment_value': 'sum'
+    })
+    rfm.rename(columns={'order_purchase_timestamp': 'Recency',
+                        'order_id': 'Frequency',
+                        'payment_value': 'Monetary'}, inplace=True)
+
+    # 이상치 처리 (상하위 1% 제거)
+    for col in ['Recency', 'Frequency', 'Monetary']:
+        q1 = rfm[col].quantile(0.01)
+        q99 = rfm[col].quantile(0.99)
+        rfm = rfm[(rfm[col] >= q1) & (rfm[col] <= q99)]
+
+    # RFM Scoring using quantiles
+    rfm['R_Score'] = pd.qcut(rfm['Recency'], q=5, labels=False, duplicates='drop') + 1 # Recency: smaller is better, so reverse score later
+    rfm['F_Score'] = pd.qcut(rfm['Frequency'], q=5, labels=False, duplicates='drop') + 1 # Frequency: larger is better
+    rfm['M_Score'] = pd.qcut(rfm['Monetary'], q=5, labels=False, duplicates='drop') + 1 # Monetary: larger is better
+    
+    # Reverse Recency score: higher Recency means less recent, so lower score
+    rfm['R_Score'] = rfm['R_Score'].max() - rfm['R_Score'] + 1
+
+    rfm['RFM_Score'] = rfm['R_Score'].astype(str) + rfm['F_Score'].astype(str) + rfm['M_Score'].astype(str)
+
+    # User's segment_customer function
+    def segment_customer(row):
+        r = row["R_Score"]
+        f = row["F_Score"]
+        m = row["M_Score"]
+        rfm_score = row["RFM_Score"]
+        # 핵심 VIP 그룹
+        if rfm_score in ["555", "554", "545", "544", "455"]:
+            return "VIP"
+        # 최근에 자주 오는 충성 고객
+        elif r >= 4 and f >= 3:
+            return "Loyal"
+        # 횟수/금액은 높지만 최근성은 살짝 떨어지는 성장 고객
+        elif f >= 4 or m >= 4:
+            return "Potential"
+        # 오래 안 오고, 자주/많이 사지도 않은 이탈 위험군
+        elif r <= 2 and f <= 2:
+            return "At Risk"
+        else:
+            return "Normal"
+
+    rfm["Segment"] = rfm.apply(segment_customer, axis=1)
+    
+    # 세그먼트별 고객 수 시각화
+    segment_counts = rfm['Segment'].value_counts()
+    
+    plt.figure(figsize=(10, 6))
+    segment_counts.plot(kind='bar', rot=0)
+    plt.title('고객 세그먼트별 고객 수')
+    plt.xlabel('고객 세그먼트')
+    plt.ylabel('고객 수')
+    plt.tight_layout()
+    
+    img_path = 'e-commerce/images/plot_12_customer_segmentation.png'
+    plt.savefig(img_path)
+    plt.close()
+    
+    report += f"![고객 세그먼트 분포](../{img_path})\n\n"
+    
+    # 세그먼트별 특성 요약
+    segment_summary = rfm.groupby('Segment').agg(
+        Recency_Mean=('Recency', 'mean'),
+        Frequency_Mean=('Frequency', 'mean'),
+        Monetary_Mean=('Monetary', 'mean'),
+        Count=('Recency', 'count')
+    ).sort_values(by='Monetary_Mean', ascending=False)
+    
+    report += "### 고객 세그먼트별 특성\n\n"
+    report += segment_summary.to_markdown() + "\n\n"
+    
+    return report
+
 def main():
     """EDA 프로세스를 실행하고 마크다운 보고서를 생성합니다."""
     
@@ -329,6 +420,7 @@ def main():
     markdown_report += plot_price_distribution(items_df)
     markdown_report += plot_freight_value_distribution(items_df)
     markdown_report += plot_top_products_by_quantity(full_merged_df)
+    markdown_report += plot_customer_segmentation(full_merged_df)
 
     # 마크다운 파일 저장
     with open('e-commerce/EDA_Report.md', 'w', encoding='utf-8') as f:
