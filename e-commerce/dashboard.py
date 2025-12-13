@@ -17,7 +17,6 @@ def load_and_preprocess_data():
     """
     # 데이터 로드
     datasets = load_datasets('e-commerce')
-    st.write(f"Available dataset keys: {list(datasets.keys())}")
     orders_df = datasets['olist_orders']
     payments_df = datasets['olist_order_payments']
     reviews_df = datasets['olist_order_reviews']
@@ -37,7 +36,7 @@ def load_and_preprocess_data():
     # 시간 관련 컬럼 변환
     time_cols = ['order_purchase_timestamp', 'order_approved_at', 'order_delivered_carrier_date', 'order_delivered_customer_date', 'order_estimated_delivery_date']
     for col in time_cols:
-        df[col] = pd.to_datetime(df[col])
+        df[col] = pd.to_datetime(df[col], errors='coerce')
         
     df['purchase_year'] = df['order_purchase_timestamp'].dt.year
 
@@ -46,27 +45,13 @@ def load_and_preprocess_data():
 def main_page(df):
     """
     메인 페이지를 렌더링합니다.
-    데이터 개요와 검색 기능을 포함합니다.
+    데이터 개요를 포함합니다.
     """
     st.title("📊 이커머스 데이터 분석 대시보드")
     st.write("이 대시보드는 브라질 이커머스(Olist) 데이터를 분석하고 시각화합니다.")
 
     st.header("데이터 미리보기")
     st.dataframe(df.head())
-
-    st.header("데이터 검색")
-    search_col = st.radio("검색할 컬럼 선택", ('상품 카테고리 (영문)', '주문 ID'))
-    
-    if search_col == '상품 카테고리 (영문)':
-        search_term = st.text_input("검색할 상품 카테고리(영문)를 입력하세요:")
-        if search_term:
-            results = df[df['product_category_name_english'].str.contains(search_term, case=False, na=False)]
-            st.dataframe(results)
-    else: # 주문 ID
-        search_term = st.text_input("검색할 주문 ID를 입력하세요:")
-        if search_term:
-            results = df[df['order_id'].str.contains(search_term, case=False, na=False)]
-            st.dataframe(results)
 
 
 def sales_analysis_page(df):
@@ -79,7 +64,7 @@ def sales_analysis_page(df):
     
     with tabs[0]:
         st.header("월별 매출 추이")
-        # 4. 월별 매출 추이: 막대 차트
+        # 월별 매출 추이: 막대 차트
         df['purchase_month'] = df['order_purchase_timestamp'].dt.to_period('M').astype(str)
         monthly_sales = df.groupby('purchase_month')['payment_value'].sum().reset_index()
         fig = px.bar(monthly_sales, x='purchase_month', y='payment_value', title="월별 총 매출 추이", labels={'purchase_month': '구매 월', 'payment_value': '총 매출'})
@@ -89,7 +74,7 @@ def sales_analysis_page(df):
             
     with tabs[1]:
         st.header("주요 고객 분포 (주별 매출)")
-        # 5. 주요 고객 분포 (주별 매출): 막대 차트
+        # 주요 고객 분포 (주별 매출): 막대 차트
         state_sales = df.groupby('customer_state')['payment_value'].sum().sort_values(ascending=False).head(10).reset_index()
         fig = px.bar(state_sales, x='customer_state', y='payment_value', title="상위 10개 주(State)별 총 매출", labels={'customer_state': '주(State)', 'payment_value': '총 매출'})
         st.plotly_chart(fig, use_container_width=True)
@@ -98,18 +83,10 @@ def sales_analysis_page(df):
             
     with tabs[2]:
         st.header("인기 상품 카테고리 (매출 기준)")
-        # 6. 인기 상품 카테고리 (매출 기준): 라인 차트와 막대 차트
+        # 인기 상품 카테고리 (매출 기준): 막대 차트
         category_sales = df.groupby('product_category_name_english')['payment_value'].sum().sort_values(ascending=False).head(10).reset_index()
         
-        fig = go.Figure()
-        fig.add_trace(go.Bar(x=category_sales['product_category_name_english'], y=category_sales['payment_value'], name='매출액 (막대)'))
-        fig.add_trace(go.Scatter(x=category_sales['product_category_name_english'], y=category_sales['payment_value'], name='매출액 (라인)', mode='lines+markers'))
-        
-        fig.update_layout(
-            title="상위 10개 상품 카테고리별 총 매출",
-            xaxis_title="상품 카테고리",
-            yaxis_title="총 매출"
-        )
+        fig = px.bar(category_sales, x='product_category_name_english', y='payment_value', title="상위 10개 상품 카테고리별 총 매출", labels={'product_category_name_english': '상품 카테고리', 'payment_value': '총 매출'})
         st.plotly_chart(fig, use_container_width=True)
         with st.expander("데이터 보기"):
             st.dataframe(category_sales)
@@ -124,59 +101,40 @@ def customer_product_analysis_page(df):
 
     with tabs[0]:
         st.header("리뷰 점수 분포")
-        # 3. 리뷰 점수 분포: 수평 막대 차트
+        # 리뷰 점수 분포: 수평 막대 차트
         review_scores = df['review_score'].value_counts().sort_values().reset_index()
         fig = px.bar(review_scores, y='review_score', x='count', title="리뷰 점수 분포", orientation='h', labels={'review_score': '리뷰 점수', 'count': '주문 수'})
+        fig.update_yaxes(type='category')
         st.plotly_chart(fig, use_container_width=True)
         with st.expander("데이터 보기"):
             st.dataframe(review_scores)
 
     with tabs[1]:
         st.header("충성 고객 분석 (상위 10명)")
-        # 8. 충성 고객 분석 (상위 10명): plotly.graph_objects.Heatmap 사용
+        # 충성 고객 분석 (상위 10명): 막대 차트
         top_customers = df['customer_unique_id'].value_counts().head(10).reset_index()
         top_customers.columns = ['customer_unique_id', 'order_count']
-        fig = go.Figure(data=go.Heatmap(
-                   z=[top_customers['order_count']],
-                   x=top_customers['customer_unique_id'],
-                   y=['주문 수'],
-                   hoverongaps=False,
-                   colorscale='Viridis'))
-        fig.update_layout(title='상위 10명 고객의 주문 수')
+        fig = px.bar(top_customers, x='customer_unique_id', y='order_count', title="상위 10명 고객의 주문 수", labels={'customer_unique_id': '고객 ID', 'order_count': '주문 수'})
         st.plotly_chart(fig, use_container_width=True)
         with st.expander("데이터 보기"):
             st.dataframe(top_customers)
 
     with tabs[2]:
         st.header("상품 가격 분포")
-        # 9. 상품 가격 분포: plotly.graph_objects.Heatmap 사용. 첫 번째 열의 이름은 'Acquisition'으로 지정합니다.
-        price_bins = pd.cut(df['price'], bins=10)
-        price_dist = df.groupby(price_bins, observed=False)['price'].count().reset_index()
-        price_dist.columns = ['가격 범위', '상품 수']
-
-        fig = go.Figure(data=go.Heatmap(
-                   z=[price_dist['상품 수']],
-                   x=price_dist['가격 범위'].astype(str),
-                   y=['상품 수'],
-                   hoverongaps=False,
-                   colorscale='Blues'))
-        fig.update_layout(title='상품 가격 분포')
-        fig.update_yaxes(autorange="reversed", ticktext=["Acquisition"], tickvals=[0]) # 첫 번째 열 이름 지정
+        # 상품 가격 분포: 히스토그램
+        fig = px.histogram(df, x="price", nbins=50, title="상품 가격 분포", labels={'price': '가격', 'count': '상품 수'})
         st.plotly_chart(fig, use_container_width=True)
-        with st.expander("가격대별 상품 수 데이터 보기"):
-            st.dataframe(price_dist)
 
         st.header("배송비 분포")
-        # 10. 배송비 분포 : 라인 차트
-        freight_dist = df['freight_value'].value_counts().sort_index().reset_index()
-        fig = px.line(freight_dist, x='freight_value', y='count', title="배송비 분포", labels={'freight_value': '배송비', 'count': '주문 수'})
+        # 배송비 분포 : 히스토그램
+        fig = px.histogram(df, x="freight_value", nbins=50, title="배송비 분포", labels={'freight_value': '배송비', 'count': '주문 수'})
         st.plotly_chart(fig, use_container_width=True)
-        with st.expander("데이터 보기"):
-            st.dataframe(freight_dist)
+        with st.expander("가격 및 배송비 데이터 보기"):
+            st.dataframe(df[['price', 'freight_value']].describe())
 
     with tabs[3]:
         st.header("인기 상품 (판매 수량 기준)")
-        # 11. 인기 상품(판매수량 기준): 막대 차트
+        # 인기 상품(판매수량 기준): 막대 차트
         top_products = df['product_category_name_english'].value_counts().head(10).reset_index()
         fig = px.bar(top_products, x='product_category_name_english', y='count', title="상위 10개 인기 상품 (판매 수량 기준)", labels={'product_category_name_english': '상품 카테고리', 'count': '판매 수량'})
         st.plotly_chart(fig, use_container_width=True)
@@ -193,16 +151,16 @@ def user_behavior_analysis_page(df):
     
     with tabs[0]:
         st.header("주문 상태 분포")
-        # 1. 주문 상태 분포: 라인 차트
+        # 주문 상태 분포: 막대 차트
         status_counts = df['order_status'].value_counts().reset_index()
-        fig = px.line(status_counts, x='order_status', y='count', title="주문 상태별 주문 수", markers=True, labels={'order_status': '주문 상태', 'count': '주문 수'})
+        fig = px.bar(status_counts, x='order_status', y='count', title="주문 상태별 주문 수", labels={'order_status': '주문 상태', 'count': '주문 수'})
         st.plotly_chart(fig, use_container_width=True)
         with st.expander("데이터 보기"):
             st.dataframe(status_counts)
 
     with tabs[1]:
         st.header("결제 유형 분석")
-        # 2. 결제 유형 분석: 막대 차트
+        # 결제 유형 분석: 막대 차트
         payment_counts = df['payment_type'].value_counts().reset_index()
         fig = px.bar(payment_counts, x='payment_type', y='count', title="결제 유형별 사용 빈도", labels={'payment_type': '결제 유형', 'count': '빈도'})
         st.plotly_chart(fig, use_container_width=True)
@@ -211,7 +169,7 @@ def user_behavior_analysis_page(df):
             
     with tabs[2]:
         st.header("시간대별 주문 분포")
-        # 7. 시간대별 주문 분포: 막대 차트
+        # 시간대별 주문 분포: 막대 차트
         df['purchase_hour'] = df['order_purchase_timestamp'].dt.hour
         hourly_orders = df['purchase_hour'].value_counts().sort_index().reset_index()
         fig = px.bar(hourly_orders, x='purchase_hour', y='count', title="시간대별 주문 수", labels={'purchase_hour': '시간', 'count': '주문 수'})
@@ -221,9 +179,12 @@ def user_behavior_analysis_page(df):
             
     with tabs[3]:
         st.header("고객 세그먼트 분석 (RFM)")
-        # 12. 고객 세그먼트 분석 (RFM): 라인 차트
+        # 고객 세그먼트 분석 (RFM): 막대 차트
         snapshot_date = df['order_purchase_timestamp'].max() + dt.timedelta(days=1)
-        rfm = df.groupby('customer_unique_id').agg({
+        # 필요한 컬럼만 추출하여 메모리 사용량 최적화
+        rfm_df = df[['customer_unique_id', 'order_id', 'order_purchase_timestamp', 'payment_value']].dropna()
+
+        rfm = rfm_df.groupby('customer_unique_id').agg({
             'order_purchase_timestamp': lambda x: (snapshot_date - x.max()).days,
             'order_id': 'nunique',
             'payment_value': 'sum'
@@ -245,7 +206,7 @@ def user_behavior_analysis_page(df):
         rfm['Segment'] = rfm.apply(segment_customer, axis=1)
         segment_counts = rfm['Segment'].value_counts().reset_index()
 
-        fig = px.line(segment_counts, x='Segment', y='count', title="고객 세그먼트별 고객 수", markers=True, labels={'Segment': '세그먼트', 'count': '고객 수'})
+        fig = px.bar(segment_counts, x='Segment', y='count', title="고객 세그먼트별 고객 수", labels={'Segment': '세그먼트', 'count': '고객 수'})
         st.plotly_chart(fig, use_container_width=True)
         with st.expander("데이터 보기"):
             st.dataframe(segment_counts)
@@ -259,32 +220,15 @@ def main():
     st.sidebar.title("메뉴")
     page = st.sidebar.radio("페이지 선택", ["메인", "매출 분석", "고객 및 상품 분석", "사용자 행동 분석"])
     
-    st.sidebar.title("필터")
-    
-    # 연도 필터
-    all_years = sorted(df['purchase_year'].unique())
-    selected_year = st.sidebar.selectbox("연도 선택", ["전체"] + all_years)
-    
-    # 국가 필터
-    all_states = sorted(df['customer_state'].unique())
-    selected_state = st.sidebar.selectbox("주(State) 선택", ["전체"] + all_states)
-
-    # 필터링된 데이터
-    filtered_df = df.copy()
-    if selected_year != "전체":
-        filtered_df = filtered_df[filtered_df['purchase_year'] == selected_year]
-    if selected_state != "전체":
-        filtered_df = filtered_df[filtered_df['customer_state'] == selected_state]
-
     # 페이지 렌더링
     if page == "메인":
-        main_page(filtered_df)
+        main_page(df)
     elif page == "매출 분석":
-        sales_analysis_page(filtered_df)
+        sales_analysis_page(df)
     elif page == "고객 및 상품 분석":
-        customer_product_analysis_page(filtered_df)
+        customer_product_analysis_page(df)
     elif page == "사용자 행동 분석":
-        user_behavior_analysis_page(filtered_df)
+        user_behavior_analysis_page(df)
 
 if __name__ == "__main__":
     main()
