@@ -17,6 +17,7 @@ def load_and_preprocess_data():
     """
     # 데이터 로드
     datasets = load_datasets('e-commerce')
+    st.write(f"Available dataset keys: {list(datasets.keys())}")
     orders_df = datasets['olist_orders']
     payments_df = datasets['olist_order_payments']
     reviews_df = datasets['olist_order_reviews']
