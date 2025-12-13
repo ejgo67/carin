@@ -17,18 +17,13 @@ def load_and_preprocess_data():
     """
     # 데이터 로드
     datasets = load_datasets('e-commerce')
-    
-    try:
-        orders_df = datasets['olist_orders']
-        payments_df = datasets['olist_order_payments']
-        reviews_df = datasets['olist_order_reviews']
-        items_df = datasets['olist_order_items']
-        products_df = datasets['olist_products']
-        customers_df = datasets['olist_customers']
-        translation_df = datasets['product_category_name_translation']
-    except KeyError as e:
-        available_keys = list(datasets.keys())
-        raise KeyError(f"Failed to find key {e}. Available keys are: {available_keys}")
+    orders_df = datasets['olist_orders']
+    payments_df = datasets['olist_order_payments']
+    reviews_df = datasets['olist_order_reviews']
+    items_df = datasets['olist_order_items']
+    products_df = datasets['olist_products']
+    customers_df = datasets['olist_customers']
+    translation_df = datasets['product_category_name_translation']
 
     # 데이터 병합
     df = pd.merge(orders_df, payments_df, on='order_id')
