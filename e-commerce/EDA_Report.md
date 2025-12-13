@@ -6,7 +6,7 @@
 
 전체 주문의 상태별 분포를 확인하여 현재 비즈니스의 상태를 파악합니다. 'delivered'가 대부분을 차지하는 것이 이상적입니다.
 
-![주문 상태 분포](../e-commerce/images/plot_1_order_status.png)
+![주문 상태 분포](images/plot_1_order_status.png)
 
 ### 주문 상태 교차표
 
@@ -25,7 +25,7 @@
 
 고객들이 선호하는 결제 방식를 파악합니다. 신용카드, 현금(boleto), 바우처 등 다양한 결제 유형의 비중을 확인할 수 있습니다.
 
-![결제 유형 분포](../e-commerce/images/plot_2_payment_types.png)
+![결제 유형 분포](images/plot_2_payment_types.png)
 
 ### 결제 유형 교차표
 
@@ -41,7 +41,7 @@
 
 고객 만족도를 파악하기 위해 리뷰 점수 분포를 확인합니다. 1점에서 5점까지의 점수 분포를 통해 서비스의 전반적인 만족도 수준을 가늠할 수 있습니다.
 
-![리뷰 점수 분포](../e-commerce/images/plot_3_review_scores.png)
+![리뷰 점수 분포](images/plot_3_review_scores.png)
 
 ### 리뷰 점수 교차표
 
@@ -57,7 +57,7 @@
 
 시간에 따른 비즈니스 성장을 파악하기 위해 월별 총 매출 추이를 분석합니다. 특정 월에 매출이 급증하거나 급감하는 패턴을 확인할 수 있습니다.
 
-![월별 매출 추이](../e-commerce/images/plot_4_monthly_sales.png)
+![월별 매출 추이](images/plot_4_monthly_sales.png)
 
 ### 월별 매출 피봇 테이블
 
@@ -92,7 +92,7 @@
 
 매출이 가장 많이 발생하는 지역을 파악하기 위해 상위 10개 주의 총 매출을 분석합니다. 이를 통해 지역별 마케팅 전략을 수립할 수 있습니다.
 
-![주별 매출](../e-commerce/images/plot_5_sales_by_state.png)
+![주별 매출](images/plot_5_sales_by_state.png)
 
 ### 상위 10개 주별 매출 교차표
 
@@ -113,7 +113,7 @@
 
 매출 기여도가 높은 상위 10개 상품 카테고리를 분석하여 인기 상품군을 파악합니다. 이를 통해 재고 관리 및 상품 추천 전략에 활용할 수 있습니다.
 
-![카테고리별 매출](../e-commerce/images/plot_6_sales_by_category.png)
+![카테고리별 매출](images/plot_6_sales_by_category.png)
 
 ### 상위 10개 카테고리별 매출 교차표
 
@@ -134,7 +134,7 @@
 
 고객들이 주로 언제 주문하는지 파악하기 위해 시간대별 주문 분포를 분석합니다. 이를 통해 마케팅 메시지 발송 시간 등을 최적화할 수 있습니다.
 
-![시간대별 주문](../e-commerce/images/plot_7_hourly_orders.png)
+![시간대별 주문](images/plot_7_hourly_orders.png)
 
 ### 시간대별 주문 교차표
 
@@ -169,7 +169,7 @@
 
 가장 많이 주문한 상위 10명의 고객을 분석하여 충성 고객의 특성을 파악합니다. 고객 ID별 주문 수를 기준으로 합니다.
 
-![상위 고객](../e-commerce/images/plot_8_top_customers.png)
+![상위 고객](images/plot_8_top_customers.png)
 
 ### 상위 10명 고객 주문 수 교차표
 
@@ -190,7 +190,7 @@
 
 판매되는 상품들의 가격대 분포를 확인합니다. 대부분의 상품이 어느 가격대에 집중되어 있는지 파악할 수 있습니다.
 
-![가격 분포](../e-commerce/images/plot_9_price_distribution.png)
+![가격 분포](images/plot_9_price_distribution.png)
 
 ### 가격 기초 통계량
 
@@ -209,7 +209,7 @@
 
 배송비의 분포를 확인하여 평균적인 배송비 수준과 이상치를 파악합니다. 가격 정책 수립 시 참고할 수 있습니다.
 
-![배송비 분포](../e-commerce/images/plot_10_freight_value_distribution.png)
+![배송비 분포](images/plot_10_freight_value_distribution.png)
 
 ### 배송비 기초 통계량
 
@@ -228,7 +228,7 @@
 
 가장 많이 팔린 상위 10개 상품을 분석합니다. 상품 카테고리 이름을 기준으로 수량을 집계합니다.
 
-![상위 판매 상품](../e-commerce/images/plot_11_top_products_quantity.png)
+![상위 판매 상품](images/plot_11_top_products_quantity.png)
 
 ### 상위 10개 상품 판매 수량 교차표
 
@@ -249,7 +249,7 @@
 
 고객의 최근 구매일(Recency), 구매 빈도(Frequency), 총 구매 금액(Monetary)을 기반으로 고객을 여러 세그먼트로 분류합니다. 이를 통해 각 세그먼트의 특성을 파악하고 타겟 마케팅 전략을 수립할 수 있습니다.
 
-![고객 세그먼트 분포](../e-commerce/images/plot_12_customer_segmentation.png)
+![고객 세그먼트 분포](images/plot_12_customer_segmentation.png)
 
 ### 고객 세그먼트별 특성
 

@@ -26,10 +26,11 @@ def plot_order_status(orders_df):
     plt.tight_layout()
     
     img_path = 'e-commerce/images/plot_1_order_status.png'
+    md_img_path = 'images/plot_1_order_status.png'
     plt.savefig(img_path)
     plt.close()
     
-    report += f"![주문 상태 분포](../{img_path})\n\n"
+    report += f"![주문 상태 분포]({md_img_path})\n\n"
     report += "### 주문 상태 교차표\n\n"
     report += status_counts.to_frame().to_markdown() + "\n\n"
     
@@ -50,10 +51,11 @@ def plot_payment_types(payments_df):
     plt.tight_layout()
     
     img_path = 'e-commerce/images/plot_2_payment_types.png'
+    md_img_path = 'images/plot_2_payment_types.png'
     plt.savefig(img_path)
     plt.close()
     
-    report += f"![결제 유형 분포](../{img_path})\n\n"
+    report += f"![결제 유형 분포]({md_img_path})\n\n"
     report += "### 결제 유형 교차표\n\n"
     report += payment_counts.to_frame().to_markdown() + "\n\n"
     
@@ -74,10 +76,11 @@ def plot_review_scores(reviews_df):
     plt.tight_layout()
     
     img_path = 'e-commerce/images/plot_3_review_scores.png'
+    md_img_path = 'images/plot_3_review_scores.png'
     plt.savefig(img_path)
     plt.close()
     
-    report += f"![리뷰 점수 분포](../{img_path})\n\n"
+    report += f"![리뷰 점수 분포]({md_img_path})\n\n"
     report += "### 리뷰 점수 교차표\n\n"
     report += score_counts.to_frame().to_markdown() + "\n\n"
     
@@ -105,10 +108,11 @@ def plot_sales_by_month(merged_df):
     plt.tight_layout()
     
     img_path = 'e-commerce/images/plot_4_monthly_sales.png'
+    md_img_path = 'images/plot_4_monthly_sales.png'
     plt.savefig(img_path)
     plt.close()
     
-    report += f"![월별 매출 추이](../{img_path})\n\n"
+    report += f"![월별 매출 추이]({md_img_path})\n\n"
     report += "### 월별 매출 피봇 테이블\n\n"
     report += monthly_sales.to_frame().to_markdown() + "\n\n"
     
@@ -130,10 +134,11 @@ def plot_sales_by_state(merged_df):
     plt.tight_layout()
     
     img_path = 'e-commerce/images/plot_5_sales_by_state.png'
+    md_img_path = 'images/plot_5_sales_by_state.png'
     plt.savefig(img_path)
     plt.close()
     
-    report += f"![주별 매출](../{img_path})\n\n"
+    report += f"![주별 매출]({md_img_path})\n\n"
     report += "### 상위 10개 주별 매출 교차표\n\n"
     report += state_sales.to_frame().to_markdown() + "\n\n"
     
@@ -158,10 +163,11 @@ def plot_sales_by_category(merged_df):
     plt.tight_layout()
     
     img_path = 'e-commerce/images/plot_6_sales_by_category.png'
+    md_img_path = 'images/plot_6_sales_by_category.png'
     plt.savefig(img_path)
     plt.close()
     
-    report += f"![카테고리별 매출](../{img_path})\n\n"
+    report += f"![카테고리별 매출]({md_img_path})\n\n"
     report += "### 상위 10개 카테고리별 매출 교차표\n\n"
     report += category_sales.to_frame().to_markdown() + "\n\n"
     
@@ -187,10 +193,11 @@ def plot_hourly_orders(merged_df):
     plt.tight_layout()
     
     img_path = 'e-commerce/images/plot_7_hourly_orders.png'
+    md_img_path = 'images/plot_7_hourly_orders.png'
     plt.savefig(img_path)
     plt.close()
     
-    report += f"![시간대별 주문](../{img_path})\n\n"
+    report += f"![시간대별 주문]({md_img_path})\n\n"
     report += "### 시간대별 주문 교차표\n\n"
     report += hourly_orders.to_frame().to_markdown() + "\n\n"
     
@@ -212,10 +219,11 @@ def plot_top_customers(merged_df):
     plt.tight_layout()
     
     img_path = 'e-commerce/images/plot_8_top_customers.png'
+    md_img_path = 'images/plot_8_top_customers.png'
     plt.savefig(img_path)
     plt.close()
     
-    report += f"![상위 고객](../{img_path})\n\n"
+    report += f"![상위 고객]({md_img_path})\n\n"
     report += "### 상위 10명 고객 주문 수 교차표\n\n"
     report += top_customers.to_frame().to_markdown() + "\n\n"
     
@@ -236,10 +244,11 @@ def plot_price_distribution(items_df):
     plt.tight_layout()
     
     img_path = 'e-commerce/images/plot_9_price_distribution.png'
+    md_img_path = 'images/plot_9_price_distribution.png'
     plt.savefig(img_path)
     plt.close()
     
-    report += f"![가격 분포](../{img_path})\n\n"
+    report += f"![가격 분포]({md_img_path})\n\n"
     report += "### 가격 기초 통계량\n\n"
     report += items_df['price'].describe().to_frame().to_markdown() + "\n\n"
     
@@ -260,10 +269,11 @@ def plot_freight_value_distribution(items_df):
     plt.tight_layout()
     
     img_path = 'e-commerce/images/plot_10_freight_value_distribution.png'
+    md_img_path = 'images/plot_10_freight_value_distribution.png'
     plt.savefig(img_path)
     plt.close()
     
-    report += f"![배송비 분포](../{img_path})\n\n"
+    report += f"![배송비 분포]({md_img_path})\n\n"
     report += "### 배송비 기초 통계량\n\n"
     report += items_df['freight_value'].describe().to_frame().to_markdown() + "\n\n"
     
@@ -286,10 +296,11 @@ def plot_top_products_by_quantity(merged_df):
     plt.tight_layout()
     
     img_path = 'e-commerce/images/plot_11_top_products_quantity.png'
+    md_img_path = 'images/plot_11_top_products_quantity.png'
     plt.savefig(img_path)
     plt.close()
 
-    report += f"![상위 판매 상품](../{img_path})\n\n"
+    report += f"![상위 판매 상품]({md_img_path})\n\n"
     report += "### 상위 10개 상품 판매 수량 교차표\n\n"
     report += top_products.to_frame().to_markdown() + "\n\n"
     
@@ -366,10 +377,11 @@ def plot_customer_segmentation(merged_df):
     plt.tight_layout()
     
     img_path = 'e-commerce/images/plot_12_customer_segmentation.png'
+    md_img_path = 'images/plot_12_customer_segmentation.png'
     plt.savefig(img_path)
     plt.close()
     
-    report += f"![고객 세그먼트 분포](../{img_path})\n\n"
+    report += f"![고객 세그먼트 분포]({md_img_path})\n\n"
     
     # 세그먼트별 특성 요약
     segment_summary = rfm.groupby('Segment').agg(
