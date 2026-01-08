@@ -12,9 +12,9 @@ def load_data():
     - 데이터 경로: 'olist/'
     """
     try:
-        orders = pd.read_csv('olist/olist_orders_dataset.csv')
-        customers = pd.read_csv('olist/olist_customers_dataset.csv')
-        payments = pd.read_csv('olist/olist_order_payments_dataset.csv')
+        orders = pd.read_csv('olist\olist_orders_dataset.csv')
+        customers = pd.read_csv('olist\olist_customers_dataset.csv')
+        payments = pd.read_csv('olist\olist_order_payments_dataset.csv')
         return orders, customers, payments
     except FileNotFoundError as e:
         st.error(f"데이터 파일을 찾을 수 없습니다: {e}. 'olist' 디렉토리에 파일이 있는지 확인하세요.")
