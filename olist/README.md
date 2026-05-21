@@ -18,6 +18,11 @@
 
 <br>
 
+## 🖥 라이브 대시보드
+👉 [대시보드 바로보기](https://cxqhapptw4djczywvrpomgw.streamlit.app/)
+
+<br>
+
 ## 🛠 사용 기술
 
 - **Python** (pandas, matplotlib, seaborn)
